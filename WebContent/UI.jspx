@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" 
+	xmlns:c="http://java.sun.com/jsp/jstl/core" 
+	xmlns:my="urn:jsptld:/WEB-INF/taglib.tld"
+	version="2.0">
+	<jsp:directive.page contentType="text/html; charset=UTF-8" 
+		pageEncoding="UTF-8" session="true"/>
+	<jsp:output doctype-root-element="html"
+		doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN"
+		doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
+		omit-xml-declaration="true" />
+<html>
+<head>
+ <link rel="StyleSheet" href="${urlPath}/res/mc.css" type="text/css" title="cse4413" media="screen, print"/>
+</head>
+
+<body>
+  <form action="" method="POST">
+  
+  <fieldset>
+  <legend>Mortgage Calculator</legend>
+  <c:if test="${not empty exception}">
+  <p id="message">${exception}</p>
+  </c:if>
+  <span class="A">
+    <label for="principle" accesskey="p">
+    Principle
+   	<span class="tip">(present value in dollars)</span>
+   </label>
+	<input type="text" name="principle" id="principle" value="${principle}"/><sup>*</sup>
+	</span>
+    <br/>
+    
+    <label id="Amor" for="amortization">
+    Amortization
+    <span class="tip">(mortgage period in years)</span>
+    </label>
+    <span class="radio">
+    <c:choose>
+    <c:when test="${empty amortization}">
+	<input type="radio" id="amort20" name="amortization" value="20"/><label for="amort20">20</label>
+	<input type="radio" id="amort25" name="amortization" value="25" checked="checked"/><label for="amort25">25</label>
+	<input type="radio" id="amort30" name="amortization" value="30"/><label for="amort30">30</label>
+	</c:when>
+	
+    <c:when test="${amortization eq 20}">
+	<input type="radio" id="amort20" name="amortization" value="20" checked="checked"/><label for="amort20">20</label>
+	<input type="radio" id="amort25" name="amortization" value="25" /><label for="amort25">25</label>
+	<input type="radio" id="amort30" name="amortization" value="30"/><label for="amort30">30</label>
+	</c:when>
+	
+	<c:when test="${amortization eq 25}">
+	<input type="radio" id="amort20" name="amortization" value="20"/><label for="amort20">20</label>
+	<input type="radio" id="amort25" name="amortization" value="25" checked="checked"/><label for="amort25">25</label>
+	<input type="radio" id="amort30" name="amortization" value="30"/><label for="amort30">30</label>
+	</c:when>
+	
+	<c:when test="${amortization eq 30}" >
+	<input type="radio" id="amort20" name="amortization" value="20"/><label for="amort20">20</label>
+	<input type="radio" id="amort25" name="amortization" value="25" /><label for="amort25">25</label>
+	<input type="radio" id="amort30" name="amortization" value="30" checked="checked"/><label for="amort30">30</label>
+	</c:when>
+	</c:choose>
+	</span>
+	<br/>
+	
+	<span class="A">
+	<label  for="interest" accesskey="i">
+		Interest
+		<span class="tip">(the term's fixed rate as %)</span>
+	</label>
+	<input type="text" name="interest" id="interest" value="${interest}"/><sup>*</sup>
+	</span>
+    <br/><br/>
+	<label> Or</label>
+	<select id="bank" name="bank">
+	<c:forEach var="b" items="${banklist}">
+	<option>${b}</option>
+	</c:forEach>
+	</select>
+	
+	<input type="submit" name="doit" id="monthpay" value="Monthly Payment"/>
+	</fieldset>
+
+  </form>
+</body>
+</html>
+
+</jsp:root>
