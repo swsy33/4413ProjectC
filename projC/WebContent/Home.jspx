@@ -8,10 +8,10 @@
 		omit-xml-declaration="true" />
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>Insert title here</title>
+<title>Home Page</title>
 </head>
 <body>
-
+<H1>home here</H1>
 </body>
 </html>
 </jsp:root>

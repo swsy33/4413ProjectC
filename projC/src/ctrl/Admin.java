@@ -50,30 +50,41 @@ public class Admin extends HttpServlet {
 		String DASHBOARD =  "Dashboard.jspx";
 		String MAXP = "MaxP.jspx";
 		//String LOGIN = "Login.jspx";
-		boolean isValid = false;
+		//boolean isValid = false;
 		String view = DASHBOARD;
 		//request.setAttribute("target", LOGIN);
 		//---------------------------------------------
 		String user = request.getParameter("user");
-		String pswd = request.getParameter("pswd");	
-System.out.println("user...." + user);
+		String token = request.getParameter("hash");	
+		System.out.println("user...." + user);
+		System.out.println("token from cse...." + token);
 		//---------------------------------------------
-		isValid = (user != null);
+		//isValid = (user != null);
 		//send open auth
-		if(!isValid)
+		if(user == null)
 		{
 			//System.out.println("in oauth");
-			String oauth = "https://www.eecs.yorku.ca/~cse31018/auth/Auth.cgi";
+			String oauth = "https://www.eecs.yorku.ca/~cse31018/auth/Auth.cgi?back=" + request.getRequestURL();
 			response.sendRedirect(oauth);
 		}
 		else
 		{
-			//System.out.println("back");
-			//System.out.println("backuser...." + user);
-			view = "Dashboard.jspx";		
-			request.setAttribute("target", MAXP);
-			request.setAttribute("user", user);
-			this.getServletContext().getRequestDispatcher("/" + view).forward(request, response);
+			if((token != null) && validToken(user, token))
+			{System.out.println("line 73");
+				view = "Dashboard.jspx";		
+				request.setAttribute("target", MAXP);
+				request.setAttribute("user", user);
+				this.getServletContext().getRequestDispatcher("/" + view).forward(request, response);
+			}
+			else
+			{
+				//invalid login
+				view = "Dashboard.jspx";		
+				request.setAttribute("target", "Home.jspx");
+				this.getServletContext().getRequestDispatcher("/" + view).forward(request, response);
+				
+			}
+
 		}
 
 	}
@@ -87,8 +98,29 @@ System.out.println("user...." + user);
 
 	private String getHashPassword(String data, String algorithm) throws NoSuchAlgorithmException
 	{
+		String salt = "shared secret";
+		data = data + salt;
 		String hash = javax.xml.bind.DatatypeConverter.printHexBinary(MessageDigest.getInstance(algorithm).digest((data).getBytes()));
+		System.out.println("self hash " + hash);
 		return hash;
+	}
+
+	private boolean validToken(String user, String hash)
+	{
+		boolean result = false;
+		try
+		{
+			String validToken = getHashPassword(user, "sha1");
+			if(validToken.equalsIgnoreCase(hash))
+			{
+				result = true;
+			}
+		} catch (NoSuchAlgorithmException e)
+		{
+			System.out.println("no such hash Algorithm");
+		}
+
+		return result;
 	}
 
 	private boolean validLogin(String user, String pwd) throws FileNotFoundException
